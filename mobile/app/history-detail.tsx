@@ -63,7 +63,7 @@ export default function HistoryDetailScreen() {
         <TouchableOpacity onPress={() => router.back()} style={[styles.backButton, { backgroundColor: colors.card }]}>
           <Ionicons name="arrow-back" size={20} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Detalle del Análisis</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{i18n.t('history.detailTitle')}</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -85,7 +85,7 @@ export default function HistoryDetailScreen() {
               <View style={styles.resultInfo}>
                 <Text style={[styles.resultName, { color: colors.text }]}>{disease.name}</Text>
                 <Text style={[styles.resultSeverity, { color: colors.textSecondary }]}>
-                  Severidad: <Text style={[styles.severityText, { color: disease.color }]}>
+                  {i18n.t('history.severity')}: <Text style={[styles.severityText, { color: disease.color }]}>
                     {disease.severity}
                   </Text>
                 </Text>
@@ -93,7 +93,7 @@ export default function HistoryDetailScreen() {
             </View>
 
             <View style={[styles.confidenceSection, { borderTopColor: colors.border + '40' }]}>
-              <Text style={[styles.confidenceLabel, { color: colors.textSecondary }]}>Nivel de Confianza</Text>
+              <Text style={[styles.confidenceLabel, { color: colors.textSecondary }]}>{i18n.t('history.confidenceLevel')}</Text>
               <View style={styles.confidenceBarContainer}>
                 <View style={[styles.confidenceBar, { backgroundColor: colors.border + '40' }]}>
                   <View 
@@ -110,7 +110,7 @@ export default function HistoryDetailScreen() {
 
           {/* Description Section */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>📋 Descripción</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>📋 {i18n.t('history.description')}</Text>
             <View style={[styles.sectionCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
               <Text style={[styles.description, { color: colors.textSecondary }]}>{disease.description}</Text>
             </View>
@@ -118,7 +118,7 @@ export default function HistoryDetailScreen() {
 
           {/* Recommendations Section */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>💡 Recomendaciones</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>💡 {i18n.t('history.recommendations')}</Text>
             <View style={[styles.sectionCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
               {disease.recommendations.map((rec: string, index: number) => (
                 <View key={index} style={styles.recommendationItem}>
@@ -134,7 +134,7 @@ export default function HistoryDetailScreen() {
             <View style={[styles.statCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
               <Ionicons name="flash" size={28} color="#10B981" />
               <Text style={[styles.statValue, { color: colors.text }]}>{(conf * 100).toFixed(0)}%</Text>
-              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Confianza</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{i18n.t('history.confidence')}</Text>
             </View>
             
             <View style={[styles.statCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
@@ -146,7 +146,7 @@ export default function HistoryDetailScreen() {
             <View style={[styles.statCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
               <Ionicons name="eye" size={28} color="#F97316" />
               <Text style={[styles.statValue, { color: colors.text }]}>TTA</Text>
-              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Precisión</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{i18n.t('history.precision')}</Text>
             </View>
           </View>
 
@@ -164,7 +164,7 @@ export default function HistoryDetailScreen() {
                 style={styles.gradientButton}
               >
                 <Ionicons name="camera" size={20} color="#FFFFFF" />
-                <Text style={styles.actionButtonText}>Nuevo Análisis</Text>
+                <Text style={styles.actionButtonText}>{i18n.t('history.newAnalysis')}</Text>
               </LinearGradient>
             </TouchableOpacity>
 
@@ -174,7 +174,7 @@ export default function HistoryDetailScreen() {
               activeOpacity={0.8}
             >
               <Ionicons name="share-social" size={20} color="#10B981" />
-              <Text style={styles.shareButtonText}>Compartir</Text>
+              <Text style={styles.shareButtonText}>{i18n.t('history.share')}</Text>
             </TouchableOpacity>
           </View>
         </View>

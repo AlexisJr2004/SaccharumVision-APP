@@ -132,7 +132,7 @@ export default function HomeScreen() {
                   <Ionicons name="sparkles" size={20} color="white" />
                 </LinearGradient>
                 <Text style={[styles.dashboardText, { color: colors.textSecondary }]}>
-                  Dashboard
+                  {i18n.t('home.dashboard')}
                 </Text>
               </View>
               
@@ -157,7 +157,7 @@ export default function HomeScreen() {
             {/* Greeting */}
             <View style={styles.greetingSection}>
               <Text style={[styles.greetingText, { color: colors.text }]}>
-                Hola,{'\n'}AgroScan 🌱
+                {i18n.t('home.hello')},{' \n'}AgroScan 🌱
               </Text>
               <View style={styles.tabRow}>
                 <TouchableOpacity 
@@ -165,7 +165,7 @@ export default function HomeScreen() {
                   onPress={scrollToChart}
                 >
                   <Text style={[styles.tabText, { color: colors.textSecondary }]}>
-                    Vista General
+                    {i18n.t('home.overview')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
@@ -174,7 +174,7 @@ export default function HomeScreen() {
                     style={[styles.activeTab, { shadowColor: '#3B82F6' }]}
                   >
                     <Text style={styles.activeTabText}>
-                      Dashboard
+                      {i18n.t('home.dashboard')}
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -207,11 +207,11 @@ export default function HomeScreen() {
                       <Text style={styles.analysisBadgeText}>{scanCount}</Text>
                     </View>
                     <Text style={[styles.cardTitle, { color: colors.text }]}>
-                      Análisis
+                      {i18n.t('home.analysis')}
                     </Text>
                   </View>
                   <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>
-                    Has realizado {scanCount} {scanCount === 1 ? 'escaneo' : 'escaneos'}{'\n'}esta semana 🎯
+                    {i18n.t('home.analysisPerformed')} {scanCount} {scanCount === 1 ? i18n.t('home.scan') : i18n.t('home.scans')}{' \n'}{i18n.t('home.thisWeek')} 🎯
                   </Text>
                 </View>
                 
@@ -230,7 +230,7 @@ export default function HomeScreen() {
                   colors={['#10B981', '#059669']}
                   style={[styles.scanButton, { shadowColor: '#10B981' }]}
                 >
-                  <Text style={styles.scanButtonText}>Nuevo Escaneo</Text>
+                  <Text style={styles.scanButtonText}>{i18n.t('home.newScan')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -248,7 +248,7 @@ export default function HomeScreen() {
               ]}
             >
               <Text style={[styles.chartTitle, { color: colors.textSecondary }]}>
-                Análisis completados - Últimos 7 días
+                {i18n.t('home.completedAnalysis')}
               </Text>
               
               {/* Chart Bars */}
@@ -289,12 +289,12 @@ export default function HomeScreen() {
               <View style={[styles.statsRow, { borderTopColor: colors.border }]}>
                 <View>
                   <Text style={[styles.statValue, { color: colors.text }]}>
-                    {scanCount} Escaneos
+                    {scanCount} {scanCount === 1 ? i18n.t('home.scan') : i18n.t('home.scans')}
                   </Text>
                 </View>
                 <View>
                   <Text style={styles.accuracyValue}>
-                    98% Precisión
+                    98% {i18n.t('home.accuracy')}
                   </Text>
                 </View>
               </View>
@@ -313,7 +313,7 @@ export default function HomeScreen() {
             >
               <View style={styles.diseaseHeader}>
                 <Text style={[styles.diseaseTitle, { color: colors.text }]}>
-                  Enfermedades Detectables
+                  {i18n.t('home.detectableDiseases')}
                 </Text>
               </View>
               
@@ -321,7 +321,7 @@ export default function HomeScreen() {
               <View style={styles.diseaseGrid}>
                 <View style={styles.diseaseRow}>
                   <DiseaseCard 
-                    title="Saludable"
+                    title={i18n.t('home.healthy')}
                     accuracy="98%"
                     icon="checkmark"
                     bgColor="#ECFDF5"
@@ -331,7 +331,7 @@ export default function HomeScreen() {
                     borderColor="#10B981"
                   />
                   <DiseaseCard 
-                    title="Mosaico"
+                    title={i18n.t('home.mosaic')}
                     accuracy="95%"
                     icon="warning"
                     bgColor="#FFF7ED"
@@ -344,7 +344,7 @@ export default function HomeScreen() {
                 
                 <View style={styles.diseaseRow}>
                   <DiseaseCard 
-                    title="Podredumbre"
+                    title={i18n.t('home.redRot')}
                     accuracy="96%"
                     icon="close"
                     bgColor="#FEF2F2"
@@ -354,7 +354,7 @@ export default function HomeScreen() {
                     borderColor="#EF4444"
                   />
                   <DiseaseCard 
-                    title="Roya"
+                    title={i18n.t('home.rust')}
                     accuracy="94%"
                     icon="alert-circle"
                     bgColor="#FFFBEB"
@@ -381,10 +381,10 @@ export default function HomeScreen() {
                   </View>
                   <View style={styles.yellowTextWrapper}>
                     <Text style={[styles.yellowTitle, { color: colors.text }]}>
-                      Amarillamiento
+                      {i18n.t('home.yellowing')}
                     </Text>
                     <Text style={styles.yellowAccuracy}>
-                      93% precisión
+                      93% {i18n.t('home.precision')}
                     </Text>
                   </View>
                 </View>
@@ -441,7 +441,7 @@ function DiseaseCard({
         {title}
       </Text>
       <Text style={[styles.diseaseCardAccuracy, { color: textColor }]}>
-        {accuracy} precisión
+        {accuracy} {i18n.t('home.precision')}
       </Text>
     </TouchableOpacity>
   );

@@ -1,6 +1,7 @@
 // app/terms.tsx - Modern Terms & Conditions Screen
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import i18n from '../services/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +11,14 @@ import { useTheme } from '../contexts/ThemeContext';
 export default function TermsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = i18n.subscribe(() => {
+      forceUpdate(prev => prev + 1);
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -27,7 +36,7 @@ export default function TermsScreen() {
             <Ionicons name="arrow-back" size={20} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Términos y Condiciones
+            {i18n.t('terms.title')}
           </Text>
           <View style={{ width: 40 }} />
         </View>
@@ -50,7 +59,7 @@ export default function TermsScreen() {
             {/* Fecha */}
             <View style={[styles.dateSection, { borderBottomColor: colors.border }]}>
               <Text style={[styles.dateText, { color: colors.textSecondary }]}>
-                Última actualización: Noviembre 2025
+                {i18n.t('terms.lastUpdated')}
               </Text>
             </View>
 
@@ -61,12 +70,11 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>1</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Aceptación de los Términos
+                  {i18n.t('terms.section1Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                Al descargar, instalar o utilizar AgroScan ("la Aplicación"), usted acepta estar sujeto a estos 
-                Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, no utilice la Aplicación.
+                {i18n.t('terms.section1Content')}
               </Text>
             </View>
 
@@ -77,13 +85,11 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>2</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Descripción del Servicio
+                  {i18n.t('terms.section2Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                AgroScan es una aplicación móvil de detección de enfermedades en hojas de maíz mediante inteligencia 
-                artificial. La aplicación utiliza tecnología de aprendizaje automático para analizar imágenes y 
-                proporcionar diagnósticos preliminares.
+                {i18n.t('terms.section2Content')}
               </Text>
             </View>
 
@@ -94,21 +100,18 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>3</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Uso de la Aplicación
+                  {i18n.t('terms.section3Title')}
                 </Text>
               </View>
               <View style={styles.subsectionContainer}>
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                  <Text style={[styles.bold, { color: colors.text }]}>3.1 Propósito Informativo:</Text> Los diagnósticos proporcionados por AgroScan 
-                  son exclusivamente informativos y no deben considerarse como asesoramiento profesional definitivo.
+                  <Text style={[styles.bold, { color: colors.text }]}>{i18n.t('terms.section3_1Title')}</Text>{i18n.t('terms.section3_1Content')}
                 </Text>
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                  <Text style={[styles.bold, { color: colors.text }]}>3.2 Funcionamiento Offline:</Text> La aplicación funciona completamente offline 
-                  una vez instalada. No requiere conexión a internet para realizar análisis.
+                  <Text style={[styles.bold, { color: colors.text }]}>{i18n.t('terms.section3_2Title')}</Text>{i18n.t('terms.section3_2Content')}
                 </Text>
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                  <Text style={[styles.bold, { color: colors.text }]}>3.3 Precisión:</Text> Si bien el modelo de IA ha sido entrenado con alta 
-                  precisión (~98%), los resultados pueden variar según la calidad de la imagen y las condiciones de captura.
+                  <Text style={[styles.bold, { color: colors.text }]}>{i18n.t('terms.section3_3Title')}</Text>{i18n.t('terms.section3_3Content')}
                 </Text>
               </View>
             </View>
@@ -120,21 +123,18 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>4</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Privacidad y Datos
+                  {i18n.t('terms.section4Title')}
                 </Text>
               </View>
               <View style={styles.subsectionContainer}>
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                  <Text style={[styles.bold, { color: colors.text }]}>4.1 Datos Locales:</Text> Todas las imágenes y análisis se almacenan localmente 
-                  en su dispositivo. No se envían datos a servidores externos.
+                  <Text style={[styles.bold, { color: colors.text }]}>{i18n.t('terms.section4_1Title')}</Text>{i18n.t('terms.section4_1Content')}
                 </Text>
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                  <Text style={[styles.bold, { color: colors.text }]}>4.2 Permisos:</Text> La aplicación requiere acceso a la cámara y galería 
-                  únicamente para capturar y seleccionar imágenes de análisis.
+                  <Text style={[styles.bold, { color: colors.text }]}>{i18n.t('terms.section4_2Title')}</Text>{i18n.t('terms.section4_2Content')}
                 </Text>
                 <Text style={[styles.paragraph, { color: colors.text }]}>
-                  <Text style={[styles.bold, { color: colors.text }]}>4.3 Biometría y PIN:</Text> Los datos de autenticación (PIN, huella dactilar) 
-                  se almacenan de forma segura y cifrada en su dispositivo.
+                  <Text style={[styles.bold, { color: colors.text }]}>{i18n.t('terms.section4_3Title')}</Text>{i18n.t('terms.section4_3Content')}
                 </Text>
               </View>
             </View>
@@ -146,35 +146,35 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>5</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Limitación de Responsabilidad
+                  {i18n.t('terms.section5Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                AgroScan y sus desarrolladores no se hacen responsables por:
+                {i18n.t('terms.section5Intro')}
               </Text>
               <View style={styles.listContainer}>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Decisiones tomadas basadas en los diagnósticos de la aplicación
+                    {i18n.t('terms.section5Item1')}
                   </Text>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Pérdidas económicas derivadas del uso de la aplicación
+                    {i18n.t('terms.section5Item2')}
                   </Text>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Diagnósticos incorrectos o imprecisos
+                    {i18n.t('terms.section5Item3')}
                   </Text>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Problemas técnicos o mal funcionamiento del dispositivo
+                    {i18n.t('terms.section5Item4')}
                   </Text>
                 </View>
               </View>
@@ -187,35 +187,35 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>6</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Recomendaciones
+                  {i18n.t('terms.section6Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                Se recomienda encarecidamente:
+                {i18n.t('terms.section6Intro')}
               </Text>
               <View style={styles.listContainer}>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Consultar con un agrónomo o especialista antes de tomar decisiones importantes
+                    {i18n.t('terms.section6Item1')}
                   </Text>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Utilizar la aplicación como herramienta complementaria, no sustitutiva
+                    {i18n.t('terms.section6Item2')}
                   </Text>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Tomar fotos de buena calidad con iluminación adecuada
+                    {i18n.t('terms.section6Item3')}
                   </Text>
                 </View>
                 <View style={styles.listItem}>
                   <Text style={styles.listBullet}>•</Text>
                   <Text style={[styles.listText, { color: colors.text }]}>
-                    Mantener la aplicación actualizada a la última versión
+                    {i18n.t('terms.section6Item4')}
                   </Text>
                 </View>
               </View>
@@ -228,12 +228,11 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>7</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Propiedad Intelectual
+                  {i18n.t('terms.section7Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                Todo el contenido de la aplicación, incluyendo el modelo de IA, diseño, código y documentación, 
-                está protegido por derechos de autor y es propiedad de los desarrolladores de AgroScan.
+                {i18n.t('terms.section7Content')}
               </Text>
             </View>
 
@@ -244,12 +243,11 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>8</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Actualizaciones
+                  {i18n.t('terms.section8Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                Nos reservamos el derecho de actualizar estos términos en cualquier momento. Las actualizaciones 
-                importantes se notificarán a través de la aplicación.
+                {i18n.t('terms.section8Content')}
               </Text>
             </View>
 
@@ -260,12 +258,11 @@ export default function TermsScreen() {
                   <Text style={styles.numberBadgeText}>9</Text>
                 </View>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Contacto
+                  {i18n.t('terms.section9Title')}
                 </Text>
               </View>
               <Text style={[styles.paragraph, { color: colors.text }]}>
-                Para preguntas, sugerencias o reportar problemas, puede contactarnos a través de los canales 
-                oficiales de soporte de AgroScan.
+                {i18n.t('terms.section9Content')}
               </Text>
             </View>
 
@@ -277,7 +274,7 @@ export default function TermsScreen() {
               <View style={styles.footerContent}>
                 <Ionicons name="checkmark-circle" size={24} color="#059669" style={styles.footerIcon} />
                 <Text style={[styles.footerText, { color: colors.text }]}>
-                  Al usar AgroScan, usted reconoce haber leído, entendido y aceptado estos términos y condiciones.
+                  {i18n.t('terms.footerText')}
                 </Text>
               </View>
             </LinearGradient>

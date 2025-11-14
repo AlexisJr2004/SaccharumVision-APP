@@ -37,22 +37,57 @@ export default function NotificationsScreen() {
   const loadNotifications = async () => {
     try {
       const stored = await AsyncStorage.getItem('app_notifications');
+      let currentNotifications: Notification[] = [];
+      
       if (stored) {
-        setNotifications(JSON.parse(stored));
-      } else {
-        // Crear notificación inicial sobre la versión 5.0.0
-        const initialNotification: Notification = {
-          id: '1',
-          title: '🎉 Bienvenido a AgroScan 5.0.0',
-          message: '¡Nueva versión disponible! Esta actualización incluye:\n\n✨ Sistema de actualizaciones OTA\n🎨 Modales modernos y elegantes\n🔒 Mejoras en seguridad (PIN y biometría)\n🌙 Modo oscuro mejorado\n📊 Mejor visualización de estadísticas\n\n¡Disfruta de la nueva experiencia AgroScan!',
-          type: 'success',
-          icon: 'rocket',
-          date: new Date().toLocaleDateString('es-ES'),
-          time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-          read: false,
-        };
+        currentNotifications = JSON.parse(stored);
         
-        const initialNotifications = [initialNotification];
+        // Verificar si la notificación de traducciones ya existe
+        const hasTranslationsNotification = currentNotifications.some(n => n.id === '2');
+        
+        if (!hasTranslationsNotification) {
+          // Agregar la nueva notificación de traducciones al principio
+          const translationsNotification: Notification = {
+            id: '2',
+            title: i18n.t('notifications.translationsTitle'),
+            message: i18n.t('notifications.translationsMessage'),
+            type: 'info',
+            icon: 'language',
+            date: new Date().toLocaleDateString('es-ES'),
+            time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            read: false,
+          };
+          
+          currentNotifications = [translationsNotification, ...currentNotifications];
+          await AsyncStorage.setItem('app_notifications', JSON.stringify(currentNotifications));
+        }
+        
+        setNotifications(currentNotifications);
+      } else {
+        // Crear notificaciones iniciales
+        const initialNotifications: Notification[] = [
+          {
+            id: '2',
+            title: i18n.t('notifications.translationsTitle'),
+            message: i18n.t('notifications.translationsMessage'),
+            type: 'info',
+            icon: 'language',
+            date: new Date().toLocaleDateString('es-ES'),
+            time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            read: false,
+          },
+          {
+            id: '1',
+            title: i18n.t('notifications.welcomeTitle'),
+            message: i18n.t('notifications.welcomeMessage'),
+            type: 'success',
+            icon: 'rocket',
+            date: new Date().toLocaleDateString('es-ES'),
+            time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            read: false,
+          },
+        ];
+        
         await AsyncStorage.setItem('app_notifications', JSON.stringify(initialNotifications));
         setNotifications(initialNotifications);
       }
@@ -125,7 +160,7 @@ export default function NotificationsScreen() {
               <Ionicons name="sparkles" size={20} color="#FFFFFF" />
             </LinearGradient>
             <View>
-              <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>Notificaciones</Text>
+              <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{i18n.t('notifications.title')}</Text>
             </View>
           </View>
           
@@ -155,11 +190,11 @@ export default function NotificationsScreen() {
         {/* Title */}
         <View style={styles.titleSection}>
           <Text style={[styles.titleText, { color: colors.text }]}>
-            Notificaciones 🔔
+            {i18n.t('notifications.title')} 🔔
           </Text>
           {notifications.length > 0 && (
             <Text style={[styles.countText, { color: colors.textSecondary }]}>
-              {notifications.filter(n => !n.read).length} sin leer
+              {notifications.filter(n => !n.read).length} {i18n.t('notifications.unread')}
             </Text>
           )}
         </View>
@@ -170,9 +205,9 @@ export default function NotificationsScreen() {
         {notifications.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="notifications-off-outline" size={80} color={colors.border} />
-            <Text style={[styles.emptyTitle, { color: colors.text }]}>Sin notificaciones</Text>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>{i18n.t('notifications.noNotifications')}</Text>
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              Aquí aparecerán las notificaciones importantes sobre tus análisis y el estado de tus plantas.
+              {i18n.t('notifications.noNotificationsDesc')}
             </Text>
           </View>
         ) : (

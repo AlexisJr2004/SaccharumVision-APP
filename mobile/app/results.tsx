@@ -130,7 +130,7 @@ export default function ResultsScreen() {
             <Ionicons name="arrow-back" size={20} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Resultados del Análisis
+            {i18n.t('results.title')}
           </Text>
           <View style={{ width: 40 }} />
         </View>
@@ -164,7 +164,7 @@ export default function ResultsScreen() {
             {/* Main Result */}
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                🎯 Diagnóstico Principal
+                🎯 {i18n.t('results.mainDiagnosis')}
               </Text>
               <View 
                 style={[
@@ -183,7 +183,7 @@ export default function ResultsScreen() {
                       {disease.name}
                     </Text>
                     <Text style={[styles.diseaseSeverity, { color: colors.textSecondary }]}>
-                      Severidad: <Text style={[styles.severityValue, { color: disease.color }]}>
+                      {i18n.t('results.severity')}: <Text style={[styles.severityValue, { color: disease.color }]}>
                         {disease.severity || 'Media'}
                       </Text>
                     </Text>
@@ -196,7 +196,7 @@ export default function ResultsScreen() {
                 {/* Confidence Bar */}
                 <View style={[styles.confidenceSection, { borderTopColor: colors.border }]}>
                   <Text style={[styles.confidenceLabel, { color: colors.textSecondary }]}>
-                    Confianza del Diagnóstico
+                    {i18n.t('results.confidenceLevel')}
                   </Text>
                   <View style={styles.confidenceRow}>
                     <View style={[styles.confidenceBarContainer, { backgroundColor: colors.border }]}>
@@ -221,7 +221,7 @@ export default function ResultsScreen() {
                   <View style={styles.recommendationHeader}>
                     <Ionicons name="checkmark-circle" size={16} color="#10B981" />
                     <Text style={[styles.recommendationTitle, { color: colors.text }]}>
-                      Acción Recomendada
+                      {i18n.t('results.recommendedAction')}
                     </Text>
                   </View>
                   <Text style={[styles.recommendationText, { color: colors.textSecondary }]}>
@@ -235,7 +235,7 @@ export default function ResultsScreen() {
             {predictions.length > 1 && (
               <View style={styles.section}>
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  🔍 Otras Posibilidades
+                  🔍 {i18n.t('results.otherPossibilities')}
                 </Text>
                 {predictions.slice(1, 3).map((pred: any, index: number) => {
                   const diseaseInfo = modelService.getDiseaseInfo(pred.className);
@@ -287,12 +287,12 @@ export default function ResultsScreen() {
                   <View style={styles.statsHeaderLeft}>
                     <Ionicons name="checkmark-circle" size={20} color="#10B981" />
                     <Text style={[styles.statsTitle, { color: colors.text }]}>
-                      Análisis Completado
+                      {i18n.t('results.analysisCompleted')}
                     </Text>
                   </View>
                   <View style={styles.ttaBadge}>
                     <Text style={styles.ttaBadgeText}>
-                      {usedTTA === 'true' ? 'TTA Activado' : 'Modo Rápido'}
+                      {usedTTA === 'true' ? i18n.t('results.ttaActivated') : i18n.t('results.fastMode')}
                     </Text>
                   </View>
                 </View>
@@ -302,7 +302,7 @@ export default function ResultsScreen() {
                       {(topPrediction.confidence * 100).toFixed(0)}%
                     </Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                      Precisión
+                      {i18n.t('results.precision')}
                     </Text>
                   </View>
                   <View style={styles.statItem}>
@@ -319,7 +319,7 @@ export default function ResultsScreen() {
                       }
                     </Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                      Tiempo
+                      {i18n.t('results.time')}
                     </Text>
                   </View>
                 </View>
@@ -337,7 +337,7 @@ export default function ResultsScreen() {
                   style={[styles.actionButton, { shadowColor: '#10B981' }]}
                 >
                   <Ionicons name="add-circle" size={20} color="#fff" />
-                  <Text style={styles.actionButtonText}>Nuevo Análisis</Text>
+                  <Text style={styles.actionButtonText}>{i18n.t('results.newAnalysis')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -354,7 +354,7 @@ export default function ResultsScreen() {
               >
                 <Ionicons name="share-social" size={20} color="#10B981" />
                 <Text style={[styles.actionButtonText, { color: '#10B981' }]}>
-                  Compartir
+                  {i18n.t('results.share')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -366,7 +366,7 @@ export default function ResultsScreen() {
             >
               <Ionicons name="information-circle" size={20} color={colors.text} />
               <Text style={[styles.detailsButtonText, { color: colors.text }]}>
-                Ver Detalles Completos
+                {i18n.t('results.viewFullDetails')}
               </Text>
             </TouchableOpacity>
 

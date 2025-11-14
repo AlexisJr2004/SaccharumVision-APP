@@ -118,7 +118,7 @@ export default function HistoryScreen() {
 
     return (
       <View style={[styles.statsSection, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
-        <Text style={[styles.statsTitle, { color: colors.text }]}>📊 Estadísticas</Text>
+        <Text style={[styles.statsTitle, { color: colors.text }]}>📊 {i18n.t('history.statistics')}</Text>
         {entries.map(([disease, count]) => {
           const percentage = (count / history.length) * 100;
           const barWidth = (count / maxCount) * 100;
@@ -208,7 +208,7 @@ export default function HistoryScreen() {
               <Ionicons name="sparkles" size={20} color="#FFFFFF" />
             </LinearGradient>
             <View>
-              <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>Historial</Text>
+              <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{i18n.t('history.title')}</Text>
             </View>
           </View>
           
@@ -237,14 +237,14 @@ export default function HistoryScreen() {
 
         {/* Greeting */}
         <View style={styles.greetingSection}>
-          <Text style={[styles.greetingText, { color: colors.text }]}>Hola,{'\n'}AgroScan 🌱</Text>
+          <Text style={[styles.greetingText, { color: colors.text }]}>{i18n.t('history.hello')},{' \n'}AgroScan 🌱</Text>
           
           <View style={styles.tabContainer}>
             <TouchableOpacity 
               style={[styles.tab, styles.tabInactive, { backgroundColor: colors.card }]}
               onPress={() => router.push('/(tabs)')}
             >
-              <Text style={[styles.tabText, { color: colors.textSecondary }]}>Dashboard</Text>
+              <Text style={[styles.tabText, { color: colors.textSecondary }]}>{i18n.t('home.dashboard')}</Text>
             </TouchableOpacity>
             
             <LinearGradient
@@ -253,7 +253,7 @@ export default function HistoryScreen() {
               end={{ x: 1, y: 0 }}
               style={styles.tabActive}
             >
-              <Text style={styles.tabTextActive}>Historial</Text>
+              <Text style={styles.tabTextActive}>{i18n.t('history.title')}</Text>
             </LinearGradient>
           </View>
         </View>
@@ -263,9 +263,9 @@ export default function HistoryScreen() {
       {history.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="time-outline" size={80} color={colors.border} />
-          <Text style={[styles.emptyTitle, { color: colors.text }]}>Sin historial</Text>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>{i18n.t('history.noHistory')}</Text>
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-            Aún no hay predicciones guardadas. Realiza un escaneo para ver resultados aquí.
+            {i18n.t('history.noHistoryDesc')}
           </Text>
         </View>
       ) : (
@@ -274,8 +274,8 @@ export default function HistoryScreen() {
           
           <View style={styles.listHeader}>
             <View>
-              <Text style={[styles.listTitle, { color: colors.text }]}>{history.length} escaneos</Text>
-              <Text style={[styles.listSubtitle, { color: colors.textSecondary }]}>Historial de predicciones</Text>
+              <Text style={[styles.listTitle, { color: colors.text }]}>{history.length} {i18n.t('history.scans')}</Text>
+              <Text style={[styles.listSubtitle, { color: colors.textSecondary }]}>{i18n.t('history.historyOf')}</Text>
             </View>
             
             <View style={styles.listActions}>
@@ -283,14 +283,14 @@ export default function HistoryScreen() {
                 style={[styles.refreshButton, { backgroundColor: colors.card }]}
                 onPress={onRefresh}
               >
-                <Text style={[styles.refreshButtonText, { color: colors.text }]}>Actualizar</Text>
+                <Text style={[styles.refreshButtonText, { color: colors.text }]}>{i18n.t('history.refresh')}</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
                 style={[styles.clearButton, { backgroundColor: '#FEF2F2' }]}
                 onPress={clearHistory}
               >
-                <Text style={styles.clearButtonText}>Limpiar</Text>
+                <Text style={styles.clearButtonText}>{i18n.t('history.clear')}</Text>
               </TouchableOpacity>
             </View>
           </View>

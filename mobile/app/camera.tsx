@@ -58,7 +58,7 @@ export default function CameraScreen() {
         setSelectedImage(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert('Error', 'No se pudo tomar la foto');
+      Alert.alert(i18n.t('camera.error'), i18n.t('camera.photoError'));
     }
   };
 
@@ -77,7 +77,7 @@ export default function CameraScreen() {
         router.back();
       }
     } catch (error) {
-      Alert.alert('Error', 'No se pudo seleccionar la imagen');
+      Alert.alert(i18n.t('camera.error'), i18n.t('camera.galleryError'));
       router.back();
     }
   };
@@ -99,7 +99,7 @@ export default function CameraScreen() {
         },
       });
     } catch (error) {
-      Alert.alert('Error', 'No se pudo analizar la imagen');
+      Alert.alert(i18n.t('camera.error'), i18n.t('camera.analysisError'));
       console.error('Error en análisis:', error);
     } finally {
       setIsAnalyzing(false);
@@ -127,17 +127,17 @@ export default function CameraScreen() {
               <Ionicons name="camera-outline" size={48} color="#10B981" />
             </View>
             <Text style={[styles.permissionTitle, { color: colors.text }]}>
-              Permisos Requeridos
+              {i18n.t('camera.permissionsRequired')}
             </Text>
             <Text style={[styles.permissionText, { color: colors.textSecondary }]}>
-              Necesitamos acceso a la cámara y galería para analizar las plantas
+              {i18n.t('camera.permissionsDesc')}
             </Text>
             <TouchableOpacity onPress={requestPermissions}>
               <LinearGradient
                 colors={['#10B981', '#059669']}
                 style={styles.permissionButton}
               >
-                <Text style={styles.permissionButtonText}>Conceder Permisos</Text>
+                <Text style={styles.permissionButtonText}>{i18n.t('camera.grantPermissions')}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -162,7 +162,7 @@ export default function CameraScreen() {
             <Ionicons name="arrow-back" size={20} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text }]}>
-            {selectedImage ? 'Imagen Seleccionada' : 'Capturar Imagen'}
+            {selectedImage ? i18n.t('camera.imageSelected') : i18n.t('camera.captureImage')}
           </Text>
           <View style={{ width: 40 }} />
         </View>
@@ -203,7 +203,7 @@ export default function CameraScreen() {
                     <View style={styles.ttaTitleRow}>
                       <Text style={[styles.ttaTitle, { color: colors.text }]}>TTA</Text>
                       <Text style={[styles.ttaStatus, { color: colors.textSecondary }]}>
-                        {useTTA ? '(Activado)' : '(Desactivado)'}
+                        {useTTA ? i18n.t('camera.ttaActivated') : i18n.t('camera.ttaDeactivated')}
                       </Text>
                       <TouchableOpacity onPress={() => setShowTTAInfo(true)}>
                         <Ionicons name="information-circle-outline" size={16} color="#3B82F6" />
@@ -230,7 +230,7 @@ export default function CameraScreen() {
                 onPress={() => setSelectedImage(null)}
               >
                 <Ionicons name="refresh" size={20} color="#fff" />
-                <Text style={styles.retakeButtonText}>Repetir</Text>
+                <Text style={styles.retakeButtonText}>{i18n.t('camera.retry')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -246,13 +246,13 @@ export default function CameraScreen() {
                     <>
                       <ActivityIndicator color="#fff" size="small" />
                       <Text style={styles.analyzeButtonText}>
-                        {useTTA ? 'Analizando con TTA...' : 'Analizando...'}
+                        {useTTA ? i18n.t('camera.analyzingTTA') : i18n.t('camera.analyzing')}
                       </Text>
                     </>
                   ) : (
                     <>
                       <Ionicons name="search" size={20} color="#fff" />
-                      <Text style={styles.analyzeButtonText}>Analizar</Text>
+                      <Text style={styles.analyzeButtonText}>{i18n.t('camera.analyze')}</Text>
                     </>
                   )}
                 </LinearGradient>
@@ -280,10 +280,10 @@ export default function CameraScreen() {
               </LinearGradient>
 
               <Text style={[styles.captureTitle, { color: colors.text }]}>
-                Analizar Planta
+                {i18n.t('camera.analyzePlant')}
               </Text>
               <Text style={[styles.captureSubtitle, { color: colors.textSecondary }]}>
-                Captura o selecciona una imagen para detectar enfermedades
+                {i18n.t('camera.captureDesc')}
               </Text>
 
               <View style={styles.captureButtons}>
@@ -293,7 +293,7 @@ export default function CameraScreen() {
                     style={[styles.primaryCaptureButton, { shadowColor: '#10B981' }]}
                   >
                     <Ionicons name="camera" size={20} color="#fff" />
-                    <Text style={styles.primaryCaptureButtonText}>Tomar Foto</Text>
+                    <Text style={styles.primaryCaptureButtonText}>{i18n.t('camera.takePhoto')}</Text>
                   </LinearGradient>
                 </TouchableOpacity>
 
@@ -306,7 +306,7 @@ export default function CameraScreen() {
                 >
                   <Ionicons name="images" size={20} color={colors.text} />
                   <Text style={[styles.secondaryCaptureButtonText, { color: colors.text }]}>
-                    Seleccionar de Galería
+                    {i18n.t('camera.selectFromGallery')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -318,11 +318,11 @@ export default function CameraScreen() {
         <CustomAlert
           visible={showTTAInfo}
           onClose={() => setShowTTAInfo(false)}
-          title="⚠️ Test Time Augmentation"
-          message="NOTA IMPORTANTE: El TTA actual NO está aplicando transformaciones reales.\n\n❌ Desactivado (RECOMENDADO): Predicción precisa y rápida\n⚠️ Activado: Ejecuta 3 predicciones sin transformar imagen (no mejora precisión)\n\n💡 Para TTA real, se requiere implementar expo-image-manipulator.\n\nVer PREDICTION_FIX.md para más detalles."
+          title={i18n.t('camera.ttaInfoTitle')}
+          message={i18n.t('camera.ttaInfoMessage')}
           type="warning"
           icon="warning"
-          confirmText="Entendido"
+          confirmText={i18n.t('camera.understood')}
         />
       </SafeAreaView>
     </View>

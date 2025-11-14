@@ -293,7 +293,7 @@ export default function SettingsScreen() {
               <Ionicons name="sparkles" size={20} color="#fff" />
             </LinearGradient>
             <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
-              Configuración
+              {i18n.t('settings.title')}
             </Text>
             <View style={styles.spacer} />
             <LinearGradient
@@ -309,7 +309,7 @@ export default function SettingsScreen() {
           {/* Greeting */}
           <View style={styles.greetingSection}>
             <Text style={[styles.greetingTitle, { color: colors.text }]}>
-              Hola,{'\n'}AgroScan 🌱
+              {i18n.t('home.hello')},{'\n'}AgroScan 🌱
             </Text>
             <View style={styles.tabsContainer}>
               <TouchableOpacity 
@@ -317,14 +317,14 @@ export default function SettingsScreen() {
                 onPress={() => router.push('/(tabs)')}
               >
                 <Text style={[styles.tabInactiveText, { color: colors.textSecondary }]}>
-                  Dashboard
+                  {i18n.t('home.dashboard')}
                 </Text>
               </TouchableOpacity>
               <LinearGradient
                 colors={['#3B82F6', '#2563EB']}
                 style={[styles.tabActive, { shadowColor: '#3B82F6' }]}
               >
-                <Text style={styles.tabActiveText}>Configuración</Text>
+                <Text style={styles.tabActiveText}>{i18n.t('settings.title')}</Text>
               </LinearGradient>
             </View>
           </View>
@@ -338,7 +338,7 @@ export default function SettingsScreen() {
           {/* Seguridad Section */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-              Seguridad
+              {i18n.t('settings.security')}
             </Text>
             
             {/* Biometría Card */}
@@ -359,12 +359,12 @@ export default function SettingsScreen() {
                   </View>
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: colors.text }]}>
-                      {biometricType || 'Biometría'}
+                      {biometricType || i18n.t('settings.biometric')}
                     </Text>
                     <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
                       {hasBiometricHardware 
-                        ? 'Desbloquear con huella o rostro' 
-                        : 'No disponible en este dispositivo'}
+                        ? i18n.t('settings.biometricDesc') 
+                        : i18n.t('settings.notAvailable')}
                     </Text>
                   </View>
                 </View>
@@ -396,10 +396,10 @@ export default function SettingsScreen() {
                   </View>
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: colors.text }]}>
-                      PIN de seguridad
+                      {i18n.t('settings.pinSecurity')}
                     </Text>
                     <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                      Proteger app con código PIN (4-6 dígitos)
+                      {i18n.t('settings.pinSecurityDesc')}
                     </Text>
                   </View>
                 </View>
@@ -416,7 +416,7 @@ export default function SettingsScreen() {
           {/* Apariencia Section */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-              Apariencia
+              {i18n.t('settings.appearance')}
             </Text>
             
             {/* Dark Mode Card */}
@@ -441,10 +441,10 @@ export default function SettingsScreen() {
                   </View>
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: colors.text }]}>
-                      Modo Oscuro
+                      {i18n.t('settings.darkMode')}
                     </Text>
                     <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                      Tema oscuro para la aplicación
+                      {i18n.t('settings.darkModeDesc')}
                     </Text>
                   </View>
                 </View>
@@ -476,10 +476,10 @@ export default function SettingsScreen() {
                   </View>
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: colors.text }]}>
-                      Idioma
+                      {i18n.t('settings.language')}
                     </Text>
                     <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                      Cambiar idioma de la aplicación
+                      {i18n.t('settings.languageDesc')}
                     </Text>
                   </View>
                 </View>
@@ -496,7 +496,7 @@ export default function SettingsScreen() {
           {/* Acerca de Section */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-              Acerca de
+              {i18n.t('settings.about')}
             </Text>
             
             {/* Version Card */}
@@ -516,7 +516,7 @@ export default function SettingsScreen() {
                     <Ionicons name="information-circle" size={20} color="#64748B" />
                   </View>
                   <Text style={[styles.settingTitle, { color: colors.text }]}>
-                    Versión
+                    {i18n.t('settings.version')}
                   </Text>
                 </View>
                 <Text style={[styles.settingValue, { color: colors.textSecondary }]}>
@@ -544,7 +544,7 @@ export default function SettingsScreen() {
                   </View>
                   <View style={styles.settingText}>
                     <Text style={[styles.settingTitle, { color: colors.text }]}>
-                      Términos y condiciones
+                      {i18n.t('settings.terms')}
                     </Text>
                   </View>
                 </View>
@@ -600,10 +600,10 @@ export default function SettingsScreen() {
           <View style={styles.modalOverlay}>
             <View style={[styles.modalContent, { backgroundColor: colors.card + 'F2' }]}>
               <Text style={[styles.modalTitle, { color: colors.text }]}>
-                Configurar PIN
+                {language === 'es' ? 'Configurar PIN' : 'Set up PIN'}
               </Text>
               <Text style={[styles.modalDescription, { color: colors.textSecondary }]}>
-                Ingresa un PIN de 4-6 dígitos
+                {language === 'es' ? 'Ingresa un PIN de 4-6 dígitos' : 'Enter a 4-6 digit PIN'}
               </Text>
 
               <TextInput
@@ -612,7 +612,7 @@ export default function SettingsScreen() {
                   color: colors.text,
                   borderColor: colors.border,
                 }]}
-                placeholder="Ingresa PIN"
+                placeholder={language === 'es' ? 'Ingresa PIN' : 'Enter PIN'}
                 placeholderTextColor={colors.textSecondary}
                 secureTextEntry
                 keyboardType="number-pad"
@@ -627,7 +627,7 @@ export default function SettingsScreen() {
                   color: colors.text,
                   borderColor: colors.border,
                 }]}
-                placeholder="Confirma PIN"
+                placeholder={language === 'es' ? 'Confirma PIN' : 'Confirm PIN'}
                 placeholderTextColor={colors.textSecondary}
                 secureTextEntry
                 keyboardType="number-pad"
@@ -646,7 +646,7 @@ export default function SettingsScreen() {
                   }}
                 >
                   <Text style={[styles.cancelButtonText, { color: colors.text }]}>
-                    Cancelar
+                    {language === 'es' ? 'Cancelar' : 'Cancel'}
                   </Text>
                 </TouchableOpacity>
 
@@ -655,7 +655,7 @@ export default function SettingsScreen() {
                     colors={['#3B82F6', '#2563EB']}
                     style={[styles.confirmButton, { shadowColor: '#3B82F6' }]}
                   >
-                    <Text style={styles.confirmButtonText}>Guardar</Text>
+                    <Text style={styles.confirmButtonText}>{language === 'es' ? 'Guardar' : 'Save'}</Text>
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
