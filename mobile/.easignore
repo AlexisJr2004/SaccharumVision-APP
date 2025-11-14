@@ -1,0 +1,10 @@
+node_modules
+.expo
+*.log
+.DS_Store
+# Excluir archivos de documentación temporal pero mantener README
+GUIA*.md
+PASOS*.md
+SOLUCION*.md
+PREDICTION*.md
+CONVERSION*.md
