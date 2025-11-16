@@ -15,14 +15,12 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const scrollViewRef = React.useRef<ScrollView>(null);
   const chartCardRef = React.useRef<View>(null);
-  const [modelReady, setModelReady] = useState(false);
   const [scanCount, setScanCount] = useState(0);
   const [weeklyData, setWeeklyData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
   const [, forceUpdate] = useState(0);
   const { colors, theme } = useTheme();
 
   useEffect(() => {
-    initializeModel();
     loadScanCount();
     
     const unsubscribe = i18n.subscribe(() => {
@@ -39,11 +37,6 @@ export default function HomeScreen() {
       focusListener();
     };
   }, []);
-
-  const initializeModel = async () => {
-    const loaded = await modelService.loadModel();
-    setModelReady(loaded);
-  };
 
   const loadScanCount = async () => {
     try {

@@ -95,7 +95,7 @@ export default function CameraScreen() {
           imageUri: selectedImage,
           predictions: JSON.stringify(result.predictions),
           processingTime: result.processingTime,
-          usedTTA: result.usedTTA ? 'true' : 'false',
+          usedTTA: useTTA ? 'true' : 'false',
         },
       });
     } catch (error) {

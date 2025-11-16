@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import i18n from '../../services/i18n';
+import modelService from '../../services/modelService';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface PredictionHistory {
@@ -78,26 +79,16 @@ export default function HistoryScreen() {
     });
   };
 
-  const getDiseaseEmoji = (disease: string) => {
-    const emojis: { [key: string]: string } = {
-      'Healthy': '🌱',
-      'Mosaic': '🦠',
-      'RedRot': '🍂',
-      'Rust': '🔶',
-      'Yellow': '⚠️'
-    };
-    return emojis[disease] || '📊';
+  const getDiseaseEmoji = (className: string) => {
+    return modelService.getDiseaseInfo(className).emoji;
   };
 
-  const getDiseaseColor = (disease: string) => {
-    const colors: { [key: string]: string } = {
-      'Healthy': '#4CAF50',
-      'Mosaic': '#FF9800',
-      'RedRot': '#F44336',
-      'Rust': '#FF5722',
-      'Yellow': '#FFC107'
-    };
-    return colors[disease] || '#666';
+  const getDiseaseColor = (className: string) => {
+    return modelService.getDiseaseInfo(className).color;
+  };
+
+  const getDiseaseName = (className: string) => {
+    return modelService.getDiseaseInfo(className).name;
   };
 
   // Calcular estadísticas
@@ -119,15 +110,15 @@ export default function HistoryScreen() {
     return (
       <View style={[styles.statsSection, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}>
         <Text style={[styles.statsTitle, { color: colors.text }]}>📊 {i18n.t('history.statistics')}</Text>
-        {entries.map(([disease, count]) => {
+        {entries.map(([className, count]) => {
           const percentage = (count / history.length) * 100;
           const barWidth = (count / maxCount) * 100;
           
           return (
-            <View key={disease} style={styles.statRow}>
+            <View key={className} style={styles.statRow}>
               <View style={styles.statLabel}>
-                <Text style={styles.statEmoji}>{getDiseaseEmoji(disease)}</Text>
-                <Text style={[styles.statName, { color: colors.text }]}>{disease}</Text>
+                <Text style={styles.statEmoji}>{getDiseaseEmoji(className)}</Text>
+                <Text style={[styles.statName, { color: colors.text }]}>{getDiseaseName(className)}</Text>
               </View>
               <View style={[styles.statBarContainer, { backgroundColor: colors.border + '40' }]}>
                 <View 
@@ -135,7 +126,7 @@ export default function HistoryScreen() {
                     styles.statBar, 
                     { 
                       width: `${barWidth}%`,
-                      backgroundColor: getDiseaseColor(disease)
+                      backgroundColor: getDiseaseColor(className)
                     }
                   ]} 
                 />
@@ -150,44 +141,48 @@ export default function HistoryScreen() {
     );
   };
 
-  const renderItem = ({ item }: { item: PredictionHistory }) => (
-    <TouchableOpacity 
-      style={[styles.historyCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}
-      activeOpacity={0.7}
-      onPress={() => openDetailModal(item)}
-    >
-      <Image source={{ uri: item.imageUri }} style={styles.thumbnail} />
-      
-      <View style={styles.cardContent}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.emoji}>{getDiseaseEmoji(item.prediction)}</Text>
-          <View style={styles.headerText}>
-            <Text style={[styles.diseaseName, { color: colors.text }]}>{item.prediction}</Text>
-            <Text style={[styles.dateText, { color: colors.textSecondary }]}>{item.date} • {item.time}</Text>
-          </View>
-        </View>
+  const renderItem = ({ item }: { item: PredictionHistory }) => {
+    const disease = modelService.getDiseaseInfo(item.prediction);
+    
+    return (
+      <TouchableOpacity 
+        style={[styles.historyCard, { backgroundColor: colors.card + 'CC', borderColor: colors.border + '99', shadowColor: colors.shadowColor }]}
+        activeOpacity={0.7}
+        onPress={() => openDetailModal(item)}
+      >
+        <Image source={{ uri: item.imageUri }} style={styles.thumbnail} />
         
-        <View style={styles.confidenceContainer}>
-          <View style={[styles.confidenceBar, { backgroundColor: colors.border + '40' }]}>
-            <View 
-              style={[
-                styles.confidenceFill, 
-                { 
-                  width: `${item.confidence * 100}%`,
-                  backgroundColor: getDiseaseColor(item.prediction)
-                }
-              ]} 
-            />
+        <View style={styles.cardContent}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.emoji}>{disease.emoji}</Text>
+            <View style={styles.headerText}>
+              <Text style={[styles.diseaseName, { color: colors.text }]}>{disease.name}</Text>
+              <Text style={[styles.dateText, { color: colors.textSecondary }]}>{item.date} • {item.time}</Text>
+            </View>
           </View>
-          <Text style={[styles.confidenceText, { color: colors.textSecondary }]}>
-            {(item.confidence * 100).toFixed(1)}%
-          </Text>
+          
+          <View style={styles.confidenceContainer}>
+            <View style={[styles.confidenceBar, { backgroundColor: colors.border + '40' }]}>
+              <View 
+                style={[
+                  styles.confidenceFill, 
+                  { 
+                    width: `${item.confidence * 100}%`,
+                    backgroundColor: disease.color
+                  }
+                ]} 
+              />
+            </View>
+            <Text style={[styles.confidenceText, { color: colors.textSecondary }]}>
+              {(item.confidence * 100).toFixed(1)}%
+            </Text>
+          </View>
         </View>
-      </View>
 
-      <Ionicons name="chevron-forward" size={20} color={colors.border} />
-    </TouchableOpacity>
-  );
+        <Ionicons name="chevron-forward" size={20} color={colors.border} />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>

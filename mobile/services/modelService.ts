@@ -1,73 +1,95 @@
 // services/modelService.ts
-// Servicio para cargar y usar el modelo TFLite offline
+// Servicio simplificado - SOLO API REMOTA
 import classesData from '../assets/models/classes_latest.json';
-
-// Importación dinámica de TFLite
-let TFLiteModule: any = null;
-try {
-  TFLiteModule = require('react-native-fast-tflite');
-  console.log('✅ react-native-fast-tflite cargado');
-} catch (error) {
-  console.warn('⚠️ react-native-fast-tflite no disponible, usando modo simulado');
-}
+import apiService from './apiService';
+import NetInfo from '@react-native-community/netinfo';
 
 class ModelService {
-  model: any = null;
   classes: any = null;
   isReady: boolean = false;
-  useTFLite: boolean = false;
+  remoteAvailable: boolean = false;
+  private initializationPromise: Promise<boolean> | null = null;
 
   constructor() {
     this.classes = classesData;
   }
 
-  async loadModel() {
+  /**
+   * Configura la URL de la API remota
+   */
+  setAPIUrl(url: string) {
+    apiService.setAPIUrl(url);
+  }
+
+  /**
+   * Verifica si hay conexión a internet
+   */
+  private async checkInternetConnection(): Promise<boolean> {
     try {
-      console.log('🔄 Cargando modelo TFLite...');
+      const netInfo = await NetInfo.fetch();
+      return netInfo.isConnected === true && netInfo.isInternetReachable !== false;
+    } catch (error) {
+      console.warn('⚠️ No se pudo verificar conectividad, asumiendo sin conexión');
+      return false;
+    }
+  }
+
+  /**
+   * Inicializa el servicio verificando la API remota
+   */
+  async loadModel() {
+    // Si ya hay una inicialización en progreso, retornar esa promesa
+    if (this.initializationPromise) {
+      return this.initializationPromise;
+    }
+
+    this.initializationPromise = this._initializeModel();
+    return this.initializationPromise;
+  }
+
+  private async _initializeModel(): Promise<boolean> {
+    try {
+      console.log('🔄 Inicializando servicio de modelo...');
       
-      // Intentar cargar modelo TFLite real
-      if (TFLiteModule && TFLiteModule.loadModel) {
-        try {
-          // Nota: react-native-fast-tflite maneja automáticamente los assets
-          // Solo necesitamos pasar la referencia al archivo
-          const modelAssetPath = require('../assets/models/resnet50_model_quantized.tflite');
-          
-          console.log('📦 Cargando modelo desde assets...');
-          this.model = await TFLiteModule.loadModel({
-            model: modelAssetPath,
-            numThreads: 4, // Usar 4 threads para mejor rendimiento
-            // ⚠️ CRÍTICO: Deshabilitar normalización automática
-            // El modelo espera valores 0-255, NO 0-1
-            // Por defecto react-native-fast-tflite divide por 255
-          });
-          
-          this.useTFLite = true;
-          console.log('✅ Modelo TFLite real cargado exitosamente');
-          console.log('🎯 Input shape:', this.model.inputs[0].shape);
-          console.log('📊 Output shape:', this.model.outputs[0].shape);
-          console.log('⚠️ IMPORTANTE: El modelo espera valores 0-255 (sin normalizar)');
-        } catch (tfliteError) {
-          console.warn('⚠️ No se pudo cargar TFLite, usando simulación:', tfliteError);
-          this.useTFLite = false;
-        }
+      // Verificar conectividad primero
+      const hasInternet = await this.checkInternetConnection();
+      
+      if (!hasInternet) {
+        console.warn('⚠️ Sin conexión a internet');
+        this.remoteAvailable = false;
+        this.isReady = true;
+        return false;
+      }
+      
+      console.log('🌐 Verificando API remota...');
+      this.remoteAvailable = await apiService.checkHealth();
+      
+      if (this.remoteAvailable) {
+        console.log('✅ API remota disponible');
       } else {
-        console.log('ℹ️ TFLite no disponible, usando predicciones simuladas');
-        this.useTFLite = false;
+        console.warn('⚠️ API remota no disponible');
       }
       
       this.isReady = true;
       console.log('✅ Servicio de modelo listo');
       console.log(`📋 Clases detectables: ${Object.values(this.classes).join(', ')}`);
       
-      return true;
+      return this.remoteAvailable;
     } catch (error) {
-      console.error('❌ Error cargando modelo:', error);
-      // Continuar con modo simulado
+      console.error('❌ Error inicializando modelo:', error);
       this.isReady = true;
+      this.remoteAvailable = false;
       return false;
+    } finally {
+      this.initializationPromise = null;
     }
   }
 
+  /**
+   * Predice enfermedad usando la API remota
+   * @param imageUri URI de la imagen a analizar
+   * @param useTTA Si se debe usar Test Time Augmentation para mayor precisión
+   */
   async predict(imageUri: string, useTTA: boolean = false) {
     if (!this.isReady) {
       await this.loadModel();
@@ -77,161 +99,56 @@ class ModelService {
 
     try {
       console.log('🔍 Analizando imagen:', imageUri);
-      console.log(`🔄 TTA ${useTTA ? 'ACTIVADO' : 'DESACTIVADO'}`);
-      console.log('📐 NOTA: La imagen se redimensionará a 224x224 preservando contenido completo');
+      console.log('🔧 TTA:', useTTA ? 'Activado ⚡' : 'Desactivado');
       
-      let predictions;
-
-      if (this.useTFLite && this.model) {
-        // Predicción real con TFLite
-        try {
-          console.log('🚀 Ejecutando inferencia con TFLite...');
-          
-          if (useTTA) {
-            // Test Time Augmentation: múltiples predicciones con transformaciones
-            console.log('🔄 Aplicando Test Time Augmentation (TTA)...');
-            predictions = await this.predictWithTTA(imageUri);
-          } else {
-            // Predicción simple SIN TTA (más rápida y precisa)
-            console.log('📸 Predicción SIMPLE (sin TTA) - RECOMENDADO');
-            console.log('✅ Usando imagen COMPLETA sin recortes');
-            const output = await this.model.run(imageUri);
-            const classNames = Object.values(this.classes);
-            predictions = classNames.map((name, index) => ({
-              className: name,
-              classIndex: index,
-              confidence: output[index] || 0,
-            })).sort((a, b) => b.confidence - a.confidence);
-          }
-
-          console.log('✅ Predicción TFLite completada');
-          console.log('🎯 Top 3:', predictions.slice(0, 3).map(p => 
-            `${p.className}: ${(p.confidence * 100).toFixed(1)}%`
-          ).join(', '));
-        } catch (tfliteError) {
-          console.warn('⚠️ Error en TFLite, usando simulación:', tfliteError);
-          predictions = this.getSimulatedPredictions(useTTA);
-        }
-      } else {
-        // Predicción simulada
-        console.log('🎲 Usando predicciones simuladas');
-        predictions = this.getSimulatedPredictions(useTTA);
+      // Verificar conectividad antes de intentar
+      const hasInternet = await this.checkInternetConnection();
+      if (!hasInternet) {
+        throw new Error('Sin conexión a internet. Esta aplicación requiere conexión para realizar predicciones.');
       }
+
+      if (!this.remoteAvailable) {
+        // Reintentar verificar API
+        console.log('🔄 Reintentando conexión con API...');
+        this.remoteAvailable = await apiService.checkHealth();
+        
+        if (!this.remoteAvailable) {
+          throw new Error('El servidor de predicciones no está disponible. Por favor, intenta nuevamente en unos momentos.');
+        }
+      }
+
+      console.log('🌐 Usando: API Remota' + (useTTA ? ' con TTA' : ''));
+      const response = await apiService.predict(imageUri, useTTA);
+      const predictions = response.predictions;
 
       const processingTime = Date.now() - startTime;
       console.log(`⏱️ Tiempo de procesamiento: ${processingTime}ms`);
+      console.log('🎯 Top 3:', predictions.slice(0, 3).map(p => 
+        `${p.className}: ${(p.confidence * 100).toFixed(1)}%`
+      ).join(', '));
       
       return {
         predictions,
         topPrediction: predictions[0],
         processingTime,
-        usedTTA: useTTA,
+        modelType: '🌐 API Remota',
+        usedTTA: response.usedTTA || false,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error en predicción:', error);
-      throw error;
-    }
-  }
-
-  async predictWithTTA(imageUri: string) {
-    console.log('📸 Ejecutando TTA mejorado con 3 augmentaciones optimizadas...');
-    
-    // TTA optimizado: Solo las mejores transformaciones
-    const augmentations = [
-      { name: 'original', weight: 1.0 },
-      { name: 'flip_horizontal', weight: 1.0 },  // Peso igual
-      { name: 'center_crop', weight: 0.95 }      // Ligera reducción
-    ];
-
-    const allPredictions: any[] = [];
-    
-    for (const aug of augmentations) {
-      try {
-        // En producción, aquí aplicarías la transformación a la imagen
-        const output = await this.model.run(imageUri);
-        
-        // Guardar predicciones con su peso
-        const classNames = Object.values(this.classes);
-        const predictions = classNames.map((name, index) => ({
-          className: name,
-          confidence: (output[index] || 0) * aug.weight,
-        }));
-        
-        allPredictions.push(predictions);
-        console.log(`✅ Aug ${aug.name}: Top = ${predictions.sort((a, b) => b.confidence - a.confidence)[0]?.className}`);
-      } catch (error) {
-        console.warn(`⚠️ Error en augmentación ${aug.name}:`, error);
+      
+      // Marcar API como no disponible para futuros intentos
+      this.remoteAvailable = false;
+      
+      // Relanzar error con mensaje más descriptivo
+      if (error.message) {
+        throw error;
       }
+      throw new Error('Error desconocido al realizar la predicción. Verifica tu conexión e intenta nuevamente.');
     }
-
-    // Si TTA falla, retornar predicción simple
-    if (allPredictions.length === 0) {
-      console.warn('⚠️ TTA falló completamente, usando predicción simple');
-      const output = await this.model.run(imageUri);
-      const classNames = Object.values(this.classes);
-      return classNames.map((name, index) => ({
-        className: name,
-        classIndex: index,
-        confidence: output[index] || 0,
-      })).sort((a, b) => b.confidence - a.confidence);
-    }
-
-    // Promediar usando media geométrica (mejor para TTA)
-    const classNames = Object.values(this.classes);
-    const averaged = classNames.map((name, classIndex) => {
-      // Media geométrica en lugar de aritmética
-      const product = allPredictions.reduce((acc, preds) => {
-        return acc * Math.max(preds[classIndex]?.confidence || 0.001, 0.001);
-      }, 1);
-      
-      const geometricMean = Math.pow(product, 1 / allPredictions.length);
-      
-      return {
-        className: name,
-        classIndex,
-        confidence: geometricMean,
-      };
-    });
-
-    // Normalizar para que sumen 1
-    const total = averaged.reduce((sum, pred) => sum + pred.confidence, 0);
-    const normalized = averaged.map(pred => ({
-      ...pred,
-      confidence: pred.confidence / total,
-    })).sort((a, b) => b.confidence - a.confidence);
-
-    console.log('✅ TTA completado - Predicciones con media geométrica');
-    return normalized;
   }
 
-  getSimulatedPredictions(useTTA: boolean = false) {
-    const classNames = Object.values(this.classes);
-    let randomPredictions = classNames.map((name, index) => ({
-      className: name,
-      classIndex: index,
-      confidence: Math.random(),
-    }));
 
-    if (useTTA) {
-      // Simular TTA: hacer más estables las predicciones
-      console.log('🔄 Simulando TTA - Predicciones más estables');
-      randomPredictions = randomPredictions.map(pred => ({
-        ...pred,
-        confidence: pred.confidence * 0.9 + 0.05, // Reducir varianza
-      }));
-    }
-
-    randomPredictions.sort((a, b) => b.confidence - a.confidence);
-
-    // Normalizar confidencias para que sumen ~1
-    const total = randomPredictions.reduce((sum, pred) => sum + pred.confidence, 0);
-    const normalized = randomPredictions.map(pred => ({
-      ...pred,
-      confidence: pred.confidence / total,
-    }));
-
-    return normalized;
-  }
 
   getDiseaseInfo(className: string) {
     const diseaseDatabase: { [key: string]: any } = {

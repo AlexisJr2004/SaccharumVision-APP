@@ -67,7 +67,7 @@ export default function ResultsScreen() {
       const newEntry: PredictionHistory = {
         id: Date.now().toString(),
         imageUri: imageUri as string,
-        prediction: disease.name,
+        prediction: topPrediction.className,
         confidence: topPrediction.confidence,
         date: now.toLocaleDateString('es-ES'),
         time: now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),

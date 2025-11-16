@@ -33,6 +33,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
+    // Cargar tema en background sin bloquear
     loadTheme();
   }, []);
 

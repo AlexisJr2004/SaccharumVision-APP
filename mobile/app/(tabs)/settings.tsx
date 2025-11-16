@@ -31,6 +31,7 @@ export default function SettingsScreen() {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
   const [showDownloadedAlert, setShowDownloadedAlert] = useState(false);
+  const [showDisablePinAlert, setShowDisablePinAlert] = useState(false);
   const [alertConfig, setAlertConfig] = useState({
     title: '',
     message: '',
@@ -108,23 +109,22 @@ export default function SettingsScreen() {
     if (value) {
       setShowPinModal(true);
     } else {
-      Alert.alert(
-        'Desactivar PIN',
-        '¿Estás seguro de desactivar el PIN?',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Desactivar',
-            style: 'destructive',
-            onPress: async () => {
-              await SecureStore.deleteItemAsync('app_pin');
-              await AsyncStorage.setItem('pin_enabled', 'false');
-              setPinEnabled(false);
-            },
-          },
-        ]
-      );
+      setShowDisablePinAlert(true);
     }
+  };
+
+  const disablePin = async () => {
+    await SecureStore.deleteItemAsync('app_pin');
+    await AsyncStorage.setItem('pin_enabled', 'false');
+    setPinEnabled(false);
+    
+    setAlertConfig({
+      title: '✅ PIN Desactivado',
+      message: 'La seguridad por PIN ha sido desactivada correctamente',
+      type: 'success',
+      icon: 'lock-open',
+    });
+    setShowSuccessAlert(true);
   };
 
   const toggleDarkMode = async () => {
@@ -595,15 +595,19 @@ export default function SettingsScreen() {
         <Modal
           visible={showPinModal}
           transparent
-          animationType="slide"
+          animationType="fade"
         >
-          <View style={styles.modalOverlay}>
-            <View style={[styles.modalContent, { backgroundColor: colors.card + 'F2' }]}>
+          <View style={styles.blurOverlay}>
+            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+              <View style={[styles.lockIcon, { backgroundColor: '#DBEAFE' }]}>
+                <Ionicons name="lock-closed" size={32} color="#3B82F6" />
+              </View>
+              
               <Text style={[styles.modalTitle, { color: colors.text }]}>
                 {language === 'es' ? 'Configurar PIN' : 'Set up PIN'}
               </Text>
               <Text style={[styles.modalDescription, { color: colors.textSecondary }]}>
-                {language === 'es' ? 'Ingresa un PIN de 4-6 dígitos' : 'Enter a 4-6 digit PIN'}
+                {language === 'es' ? 'Ingresa un PIN de 4-6 dígitos para proteger tu aplicación' : 'Enter a 4-6 digit PIN to protect your app'}
               </Text>
 
               <TextInput
@@ -701,6 +705,20 @@ export default function SettingsScreen() {
           icon="refresh-circle"
           confirmText="Reiniciar Ahora"
           onConfirm={reloadApp}
+        />
+
+        {/* Disable PIN Alert */}
+        <CustomAlert
+          visible={showDisablePinAlert}
+          onClose={() => setShowDisablePinAlert(false)}
+          title="⚠️ Desactivar PIN"
+          message="¿Estás seguro de desactivar el PIN de seguridad? Tu aplicación quedará sin esta protección."
+          type="warning"
+          icon="lock-open"
+          confirmText="Desactivar"
+          cancelText="Cancelar"
+          showCancel={true}
+          onConfirm={disablePin}
         />
       </SafeAreaView>
     </View>
@@ -893,6 +911,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
+  blurOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -901,24 +926,36 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    borderRadius: 16,
-    padding: 24,
+    borderRadius: 24,
+    padding: 32,
     width: '100%',
     maxWidth: 400,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowOpacity: 0.3,
+    shadowRadius: 24,
+    elevation: 12,
+    alignItems: 'center',
+  },
+  lockIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
+    textAlign: 'center',
   },
   modalDescription: {
     fontSize: 14,
     marginBottom: 24,
+    textAlign: 'center',
+    lineHeight: 20,
   },
   pinInput: {
     borderRadius: 12,
